@@ -36,7 +36,7 @@ const signin = async (req, res) => {
             const isValidUser = await bcrypt.compare(password, existingUser.hashedPassword);
 
             if(isValidUser){
-                const token = await jwt.sign({_id: existingUser._id}, process.env.SECRET_KEY);
+                const token = await jwt.sign({_id: existingUser._id}, process.env.SECRET_KEY); //Encrytion
                 res.cookie('accessToken', token, {expire: new Date() + 86400000})
 
                 return res.status(201).send({message: 'User signed-in successfully.'})
