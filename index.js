@@ -37,36 +37,18 @@ app.get('/', (req, res) => {
     res.send('Welcome!!!');
 })
 
+chatRoutes(io);
 
 app.use('/api',authRoutes);
-app.use('/api',chatRoutes);
 app.use('/api', userRoutes);
 
-// on -> receiving side.
-// emit -> sending side.
 
-io.on('connection', (socket) => {
-    console.log('Socket:', socket);
-    console.log('User connected: ', socket.id);
-
-    socket.on('join', (data) => {
-        socket.join(data);
-        console.log(`user ${socket.id} has joined the room ${data}`);
-    });
-
-    socket.on('send-message', (data) => {
-        socket.to(data.room).emit('receive-message', data);
-    } );
-
-    socket.on('disconnect', () => {
-        console.log('User Disconnected: ', socket.id);
-    })
-})
+// require('./routes/chat.routes')(io);
 
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`App is running on PORT ${PORT}`);
 })
 

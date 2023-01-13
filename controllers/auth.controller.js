@@ -86,7 +86,7 @@ const forgotPassword = async (req, res) => {
             await token.deleteOne();
         }
 
-        let newToken = crypto.randomBytes(32).toString('hex');
+        let newToken = crypto.randomBytes(32).toString('hex'); //Encryption
 
         const hashedToken = await bcrypt.hash(newToken, 10);
 
