@@ -19,7 +19,7 @@ const io = new Server(server,{
 
 //Importing routes
 const authRoutes = require('./routes/auth.routes'); //custom middleware
-const chatRoutes = require('./routes/chat.routes');
+// const chatRoutes = require('./routes/chat.routes');
 const userRoutes = require('./routes/user.routes');
 
 //Connecting DB.
@@ -33,17 +33,28 @@ app.use(cors({
 }));
 
 
-app.get('/', (req, res) => {
-    res.send('Welcome!!!');
-})
-
-chatRoutes(io);
-
 app.use('/api',authRoutes);
 app.use('/api', userRoutes);
 
+// on -> receiving side.
+// emit -> sending side.
 
-// require('./routes/chat.routes')(io);
+io.on('connection', (socket) => {
+
+    socket.on('join-room', (data) => {
+        socket.join(data);
+        console.log(`user ${socket.id} has joined the room ${data}`);
+    });
+
+    socket.on('send-message', (data) => {
+        console.log('Data: ', data );
+        socket.to(data.room).emit('receive-message', data);
+    } );
+
+    socket.on('disconnect', () => {
+        console.log('User Disconnected: ', socket.id);
+    })
+})
 
 
 const PORT = process.env.PORT || 5000;

@@ -4,6 +4,9 @@ const Tokens = require('../models/token.model');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
+const mongoose = require('mongoose'); 
+
+
 
 const { sendEmail } = require('../utils/sendEmail');
 
@@ -96,13 +99,9 @@ const forgotPassword = async (req, res) => {
 
         const link = `http://localhost:3000/passwordReset?token=${newToken}&id=${user._id}`;
 
-        const isSent = await sendEmail(user.email, 'Password Reset Link', {name: user.name, link: link});
-        if(!isSent){
-            return res.status(500).send({message: 'Internal Server Error'});
-        }
-
+        await sendEmail(user.email, 'Password Reset Link', {name: user.name, link: link});
+        
         return res.status(200).send({message: 'Email has been sent successfully.'})
-
 
     }catch(error){
         console.log('Error: ', error)
